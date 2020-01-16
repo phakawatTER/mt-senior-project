@@ -4,11 +4,19 @@ matplotlib.use("TKAgg")
 import matplotlib.pyplot as plt
 import matplotlib.backend_tools as tools
 from backgrounds import backgrounds  # load background colors
-from subjects import em,mis,scm
 import argparse
 import math
 import copy
 from matplotlib.backend_bases import NavigationToolbar2
+import json
+
+### LOAD JSON FILE ###
+with open("./subjects/em.json") as infile:
+    em = json.load(infile)
+with open("./subjects/mis.json") as infile:
+    mis = json.load(infile)
+with open("./subjects/scm.json") as infile:
+    scm = json.load(infile)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--major","-m",required=False,help="this argument is used to specify major")
@@ -23,13 +31,13 @@ HISTORY_INDEX = 0
 SCHOOL = ""
 if MAJOR == "SCM":
     SCHOOL = "Management Techonology (SCM)"
-    HISTORY = [copy.deepcopy(scm.subject)] # DEEP COPY BECAUSE WE WANT TO COPY ARRAY INSIDE DICTIONARY
+    HISTORY = [copy.deepcopy(scm["subjects"])] # DEEP COPY BECAUSE WE WANT TO COPY ARRAY INSIDE DICTIONARY
 elif MAJOR == "EM":
     SCHOOL = "Engineering Management (EM)"
-    HISTORY = [copy.deepcopy(em.subject)] # DEEP COPY BECAUSE WE WANT TO COPY ARRAY INSIDE DICTIONARY
+    HISTORY = [copy.deepcopy(em["subjects"])] # DEEP COPY BECAUSE WE WANT TO COPY ARRAY INSIDE DICTIONARY
 elif MAJOR == "MIS":
     SCHOOL="Management Techonology (MIS)"
-    HISTORY = [copy.deepcopy(mis.subject)] # DEEP COPY BECAUSE WE WANT TO COPY ARRAY INSIDE DICTIONARY
+    HISTORY = [copy.deepcopy(mis["subjects"])] # DEEP COPY BECAUSE WE WANT TO COPY ARRAY INSIDE DICTIONARY
 elif not MAJOR:
     MAJOR = "SCM"
     SCHOOL = "Management Techonology (SCM)"
@@ -96,7 +104,7 @@ class Render:
         plt.clf()
         plt.cla()
         self.draw()
-        plt.pause(0.0001)
+        plt.pause(0.00001)
         
     # CALLBACK FUNCTION FOR GRAPH ON CLICK
     def removeNodeOnClick(self,event,coords={},subjects=[]):
@@ -143,20 +151,21 @@ class Render:
     # Draw everything
     def draw(self):
         G = nx.DiGraph()
-        self.subjects = HISTORY[HISTORY_INDEX] 
-        self.NODE_COORDINATES = {}
-        self.NODE_SIZES = []
-        rootNodes = []
-        childNodes = []
-        ROOT_LEVEL = 0
-        COLOR_MAP = []
-        ROOT_NODE_COLORS = []
-        PREV_LEVEL_Y = 0
-        SCHOOL_LABEL = ""
+        self.subjects = HISTORY[HISTORY_INDEX]  # HISTORY STACK ON GIVEN CURRENT HISTORY INDEX
+        self.NODE_COORDINATES = {} # COORDINATES OF ALL NODES
+        self.NODE_SIZES = [] # MAPPED NODE SIZE LIST
+        rootNodes = [] # LIST OF ALL PARENT NODES
+        childNodes = [] # LIST OF ALL CHILD NODES
+        ROOT_LEVEL = 0 
+        COLOR_MAP = [] # MAPPED NODE COLOR LIST
+        ROOT_NODE_COLORS = [] # ROOT NODE COLOR LIST
+        PREV_LEVEL_Y = 0 # Y COORDINATE OF PREV ROOT LEVEL
+        SCHOOL_LABEL = "" # STRING TO BE DISPLAYED ON SCHOOL NODE
         for index,s in enumerate(SCHOOL.split(" "),start=0):
             SCHOOL_LABEL += f"{s}"
             if index < len(SCHOOL.split(" "))-1:
                 SCHOOL_LABEL += "\n"
+
         # FILTER ROOT NODE
         for node in copy.deepcopy(self.subjects):
             if "prerequisite" not in node:
@@ -200,7 +209,12 @@ class Render:
                     # AND IF SUBJECT IS INTERSECT WITH CURRENT MAJOR eg. EM ,SCM ,MIS
                     if parent in child["prerequisite"] and MAJOR in child["school"]:
                         _subject = child["subject"]
-                        _prereq = child["prerequisite"].pop(0)
+                        for l,p in enumerate(child["prerequisite"],start=0):
+                            if p == parent:
+                                _prereq = child["prerequisite"].pop(l)
+                                print(_prereq)
+                                break
+                        
                         if _prereq in self.NODE_COORDINATES:
                             # COORDINATE OF THIS NODE PARENT
                             PARENT_COORDINATES = self.NODE_COORDINATES[_prereq]
@@ -235,7 +249,7 @@ class Render:
         pos = nx.get_node_attributes(G, 'pos')
         while(len(G)<len(COLOR_MAP)):
             COLOR_MAP.pop()
-            
+        # print(G.edges)
         # DRAW NODES
         nx.draw_networkx_nodes(
             G,
@@ -248,8 +262,8 @@ class Render:
         # DRAW LABELS
         nx.draw_networkx_labels(G, pos, font_weight="bold",font_color="#FFFFFF",
                                 font_size=7)
-        
         child_edges = {}
+        # SORT FOR CHILD EDGES
         for (u,v,d) in G.edges(data=True):
             
             root = d["root"]
@@ -259,6 +273,7 @@ class Render:
                 child_edges[root] = [(u,v)]
             else:
                 child_edges[root].append((u,v))
+        # DRAW CHILD EDGES
         for d in ROOT_NODE_COLORS:
             color = d["color"]
             root = d["root"]
