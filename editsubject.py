@@ -63,6 +63,7 @@ class EditSubject:
         prerequisite = []
         for e in self.PREREQUISITES:
             prerequisite.append(e.get())
+        ### READ JSON FILE ###
         with open(f"./subjects/{self.major}.json") as json_file:
             data = json.load(json_file)
         # print(data["subjects"][self.subject])
@@ -76,9 +77,6 @@ class EditSubject:
                 if len(self.PREREQUISITES )==0:
                     del data["subjects"][index]["prerequisite"]
                     del self.subject_data["prerequisite"]
+        ### WRITE JSON FILE ###
         with open(f"./subjects/{self.major}.json","w") as json_file:
             json.dump(data,json_file)
-                    
-                
-                
-        

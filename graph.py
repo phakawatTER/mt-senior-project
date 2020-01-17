@@ -1,6 +1,6 @@
 import networkx as nx
 import matplotlib
-matplotlib.use("TKAgg")
+# matplotlib.use("TKAgg")
 import matplotlib.pyplot as plt
 import matplotlib.backend_tools as tools
 from backgrounds import backgrounds  # load background colors
@@ -25,6 +25,7 @@ args = vars(parser.parse_args())
 MAJOR = args["major"]
 if MAJOR:
     MAJOR = MAJOR.upper()
+    
 
 HISTORY = []
 HISTORY_INDEX = 0
@@ -41,24 +42,23 @@ elif MAJOR == "MIS":
 elif not MAJOR:
     MAJOR = "SCM"
     SCHOOL = "Management Techonology (SCM)"
-    HISTORY = [copy.deepcopy(scm.subject)] # DEEP COPY BECAUSE WE WANT TO COPY
+    HISTORY = [copy.deepcopy(scm["subjects"])] # DEEP COPY BECAUSE WE WANT TO COPY
 print(f"CURRENT SCHOOL IS {SCHOOL}")
     
 LEVEL_SUBTRACTION = 1
 SIZE = plt.rcParams["figure.figsize"]
-SIZE[0] = 15
-SIZE[1] = 10
+SIZE[0] = 14
+SIZE[1] = 7.5
 IS_FIRST = True
 SCHOOL_NODE_SIZE = 1000
-NORMAL_NODE_SIZE = 300
+NODE_SIZE_MULTIPLIER = 120
 
 class Render:
-    global MAJOR,SCHOOL_NODE_SIZE,NORMAL_NODE_SIZE,SCHOOL
+    global MAJOR,SCHOOL_NODE_SIZE,SCHOOL
     def __init__(self):
-        
         self.subjects = []
         self.NODE_COORDINATES = {}
-        self.NODE_SIZES = []
+        self.NODE_COLORS = {} 
         # BACK BUTTON CALLBACK FUNCTION
         def back(*args, **kwargs):
             global HISTORY_INDEX
@@ -89,7 +89,7 @@ class Render:
             left = 0.0,  # the left side of the subplots of the figure
             right = 1.0 ,  # the right side of the subplots of the figure
             bottom = 0.0 , # the bottom of the subplots of the figure
-            top = 0.94    , # the top of the subplots of the figure
+            top = 1    , # the top of the subplots of the figure
         )
         self.draw()
         fig = plt.figure(1) # REFERENCE TO CURRENT PLOT
@@ -138,7 +138,6 @@ class Render:
                         
         # IF EUCLIDEAN DISTANCE MATCH WITH SOME NODE SO DELETE THAT NODE
         if targetName != "":
-            print(f"remove {targetName}")
             removed = [
                 course for course in subjects if course["subject"] != targetName]
             removed = copy.deepcopy(removed)
@@ -153,11 +152,9 @@ class Render:
         G = nx.DiGraph()
         self.subjects = HISTORY[HISTORY_INDEX]  # HISTORY STACK ON GIVEN CURRENT HISTORY INDEX
         self.NODE_COORDINATES = {} # COORDINATES OF ALL NODES
-        self.NODE_SIZES = [] # MAPPED NODE SIZE LIST
         rootNodes = [] # LIST OF ALL PARENT NODES
         childNodes = [] # LIST OF ALL CHILD NODES
         ROOT_LEVEL = 0 
-        COLOR_MAP = [] # MAPPED NODE COLOR LIST
         ROOT_NODE_COLORS = [] # ROOT NODE COLOR LIST
         PREV_LEVEL_Y = 0 # Y COORDINATE OF PREV ROOT LEVEL
         SCHOOL_LABEL = "" # STRING TO BE DISPLAYED ON SCHOOL NODE
@@ -171,9 +168,7 @@ class Render:
             if "prerequisite" not in node:
                 rootNodes.append(node)
         LEVELS = len(rootNodes)  # total root nodes (length of array)
-        G.add_node(SCHOOL_LABEL, pos=(-2, -int(LEVELS/2)))  # ADD SCHOOL NODE
-        self.NODE_SIZES.append(SCHOOL_NODE_SIZE)
-        COLOR_MAP.append(backgrounds[len(backgrounds)-1]) # APPEND LAST COLOR OF THE LIST TO BE COLOR OF ROOT NODE
+        G.add_node(SCHOOL_LABEL, pos=(-2, -(LEVELS/2)),weight=10,color=backgrounds[len(backgrounds)-1])  # ADD SCHOOL NODE
 
         # FILTER CHILD NODE ** NODE THAT HAS PREREQUISITE
         for node in copy.deepcopy(self.subjects):
@@ -182,24 +177,29 @@ class Render:
 
         # childNodes variable is an array of nodes that have prerequisite
         # rootNodes variable is an array of nodes that do not have prerequisite
-
         # LOOP OVER ROOT NODES ARRAY
         for node in rootNodes:
             subject = node["subject"]  # SUBJECT NAME (ROOT NAME)
-            NODE_COLOR = backgrounds[abs(ROOT_LEVEL)%len(backgrounds)]
-            COLOR_MAP.append(NODE_COLOR)
+            weight = 1 ## Default value for weight
+            if "weight" in node: ## if weight is already set so use that value
+                weight = node["weight"]
+            NODE_COLOR = backgrounds[abs(ROOT_LEVEL)%len(backgrounds)] 
+            if subject in self.NODE_COLORS: # SAVE NODE COLORS INTO DICTIONARY
+                NODE_COLOR = self.NODE_COLORS[subject]
+            else:
+                self.NODE_COLORS[subject] = NODE_COLOR
+            
             ROOT_NODE_COLORS.append({"root":subject,"color":NODE_COLOR})
             # ADD ROOT NODE TO GRAPH
-            G.add_node(subject, pos=(1+math.pow(-1,abs(ROOT_LEVEL))*0.07, PREV_LEVEL_Y))
+            G.add_node(subject, pos=(1+math.pow(-1,abs(ROOT_LEVEL))*0.07, PREV_LEVEL_Y),weight=weight,color=NODE_COLOR)
             # ADD EDGE FROM ROOT NODE TO SCHOOL NODE
-            G.add_edge(SCHOOL_LABEL, subject, weight=5,root=SCHOOL_LABEL)
+            G.add_edge(SCHOOL_LABEL, subject, weight=weight,root=SCHOOL_LABEL,color=NODE_COLOR)
             PARENT_CURRENT_Y = ROOT_LEVEL
             PARENT_CURRENT_Y = PREV_LEVEL_Y
             PARENT_CURRENT_X = 1 + math.pow(-1,abs(ROOT_LEVEL))*0.07
             self.NODE_COORDINATES[subject] = (PARENT_CURRENT_X, PARENT_CURRENT_Y)
-            self.NODE_SIZES.append(NORMAL_NODE_SIZE)
             PARENTS = [subject]
-            Y_COORDINATES = []
+            Y_COORDINATES = [PARENT_CURRENT_Y]
             while True:
                 parent = PARENTS.pop(0)  # POP FIRST ELEMENT OF PARENTS
                 offsetY = 0.5  # Y COORDINATE OFFSET
@@ -209,10 +209,13 @@ class Render:
                     # AND IF SUBJECT IS INTERSECT WITH CURRENT MAJOR eg. EM ,SCM ,MIS
                     if parent in child["prerequisite"] and MAJOR in child["school"]:
                         _subject = child["subject"]
+                        _weight = 1 ## Default value for weight
+                        if "weight" in child: ## if weight is already set so use that value
+                            _weight = child["weight"]
+                        
                         for l,p in enumerate(child["prerequisite"],start=0):
                             if p == parent:
                                 _prereq = child["prerequisite"].pop(l)
-                                print(_prereq)
                                 break
                         
                         if _prereq in self.NODE_COORDINATES:
@@ -222,14 +225,11 @@ class Render:
                             CURRENT_Y = PARENT_COORDINATES[1] + \
                                 (offsetY-1*index)  # Y COORDINATE
                             Y_COORDINATES.append(CURRENT_Y)
-                            if _subject not in self.NODE_COORDINATES:
-                                COLOR_MAP.append(NODE_COLOR)
                             self.NODE_COORDINATES[_subject] = (CURRENT_X, CURRENT_Y)
-                            self.NODE_SIZES.append(NORMAL_NODE_SIZE)
                             # ADD NODE TO GRAPH
-                            G.add_node(_subject, pos=(CURRENT_X, CURRENT_Y))
+                            G.add_node(_subject, pos=(CURRENT_X, CURRENT_Y),weight=_weight,color=NODE_COLOR)
                             # ADD EDGE FROM PARENT TO CHILD NODE
-                            G.add_edge(_prereq, _subject, weight=3,root=subject)
+                            G.add_edge(_prereq, _subject, weight=_weight,root=subject,color=NODE_COLOR)
                             PARENTS.append(_subject)  # PUSH NEW PARENT TO THE LIST
                             index += 1
                 
@@ -247,62 +247,33 @@ class Render:
                 PREV_LEVEL_Y = minY - LEVEL_SUBTRACTION
             
         pos = nx.get_node_attributes(G, 'pos')
-        while(len(G)<len(COLOR_MAP)):
-            COLOR_MAP.pop()
-        # print(G.edges)
+            
         # DRAW NODES
         nx.draw_networkx_nodes(
             G,
             pos,
-            node_color=COLOR_MAP,
-            node_size=self.NODE_SIZES,
+            node_color=[d["color"] for (p,d) in G.nodes(data=True)],
+            node_size=[d["weight"] * NODE_SIZE_MULTIPLIER for (p,d) in G.nodes(data=True)],
             alpha=0.5,
-            linewidths=2
+            linewidths=1
         )
         # DRAW LABELS
-        nx.draw_networkx_labels(G, pos, font_weight="bold",font_color="#FFFFFF",
-                                font_size=7)
-        child_edges = {}
-        # SORT FOR CHILD EDGES
-        for (u,v,d) in G.edges(data=True):
-            
-            root = d["root"]
-            if root == MAJOR:
-                continue
-            if root not in child_edges:
-                child_edges[root] = [(u,v)]
-            else:
-                child_edges[root].append((u,v))
-        # DRAW CHILD EDGES
-        for d in ROOT_NODE_COLORS:
-            color = d["color"]
-            root = d["root"]
-            if root not in child_edges:
-                continue
-            edges = child_edges[root]
-            nx.draw_networkx_edges(G, pos, edgelist=edges, width=2,edge_color=color,alpha=0.25)
-            
-            
-        # EDGES FROM SCHOOL TO ROOT SUBJECTS
-        school_edges = [(u, v)
-                        for (u, v, d) in G.edges(data=True) if d["weight"] == 5]
-        # # EDGES TO SUBJECTS THAT HAVE 3 CREDITS
-        # credit3_edges = [(u, v)
-        #                  for (u, v, d) in G.edges(data=True) if d["weight"] == 3]
-        # # EDGES TO SUBJECTS THAT HAVE 2 CREDITS
-        # credit2_edges = [(u, v)
-        #                  for (u, v, d) in G.edges(data=True) if d["weight"] == 2]
-        # # EDGES TO SUBJECTS THAT HAVE 1 CREDITS
-        # credit1_edges = [(u, v)
-        #                  for (u, v, d) in G.edges(data=True) if d["weight"] == 1]
+        nx.draw_networkx_labels(
+            G,
+            pos,
+            font_weight="bold",
+            font_color="#ffffff",
+            font_size=6
+        )
         # # DRAW SCHOOL EDGES
-        nx.draw_networkx_edges(G, pos, edgelist=school_edges, width=2.5,edge_color="#ee3a6a",alpha=0.25)
-        # # DRAW 3 CREDIT EDGES
-        # nx.draw_networkx_edges(G, pos, edgelist=credit3_edges, width=3,edge_color="#6200E1",alpha=0.25)
-        # # DRAW 2 CREDIT EDGES
-        # nx.draw_networkx_edges(G, pos, edgelist=credit2_edges, width=2,edge_color="#FFFFFF",alpha=1.00)
-        # # DRAW 1 CREDIT EDGES
-        # nx.draw_networkx_edges(G, pos, edgelist=credit1_edges, width=1,edge_color="#ffffff",alpha=1.00)
+        nx.draw_networkx_edges(
+            G,
+            pos,
+            edgelist=G.edges(),
+            edge_color=[d["color"] for (u,v,d) in G.edges(data=True)],
+            width=[d["weight"] for (u,v,d) in G.edges(data=True)],
+            alpha=0.25
+        )
         
         plt.axis("off") # TURN OFF AXIS
         title_obj = plt.title(f"School of {SCHOOL}") # SET TITLE
