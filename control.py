@@ -55,19 +55,7 @@ class Control:
         self.canvas.config(yscrollcommand=self.vbar.set)
         self.addframe()
         self.canvas.pack()
-        self.app.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.app.mainloop()
-        
-        
-    def on_closing(self):
-        for proc in PROCESSES:
-            print("REMOVE")
-            proc.terminate()
-            print(proc)
-        self.app.destroy()
-        
-    
-        
         
     def addframe(self):
         self.frame = Frame(self.canvas,bg=THEME_COLOR)
@@ -80,7 +68,7 @@ class Control:
         Label(self.frame,text="Weight",bg=THEME_COLOR,fg=TITLE_COLOR).grid(row=2,column=2,sticky="N")
         self.app.update()
         row_size = self.popupMenu2.winfo_height()
-        self.button_1 = Button(self.frame, text='Search',highlightbackground=THEME_COLOR,
+        self.button_1 = Button(self.frame, text='View Path',highlightbackground=THEME_COLOR,
                                command=lambda: self.renderGraph())
         self.button_1 . grid(row=1, column=2, sticky="N")
         ### ADD SCROLLBAR
@@ -99,7 +87,7 @@ class Control:
             subject_entry.grid(row=row, column=1, sticky="N")
             weight_entry = Entry(self.frame,textvariable=self.TKVARS[index][1], width=20,highlightbackground=THEME_COLOR)
             weight_entry.grid(row=row, column=2,sticky="N")
-            Button(self.frame,text="add preq.",highlightbackground=THEME_COLOR,command=lambda s=index:self.addTopLevel(s))\
+            Button(self.frame,text="edit preq.",highlightbackground=THEME_COLOR,command=lambda s=index:self.addTopLevel(s))\
                 .grid(row=row,column=3,sticky="N")
         addBtn = Button(self.frame,text="+add",highlightbackground=THEME_COLOR,command=lambda:self.addRow())
         addBtn.grid(column=0,row=row+1)
@@ -167,7 +155,7 @@ class Control:
             json.dump(globals()[self.MAJOR],json_file)
         
     def renderGraph(self):
-        proc = Process(target=os.system,args=(f"python3.6 graph.py --major {self.MAJOR}",))
+        proc = Process(target=os.system,args=(f"python3 graph.py --major {self.MAJOR}",))
         PROCESSES.append(proc)
         proc.daemon = True
         proc.start()
