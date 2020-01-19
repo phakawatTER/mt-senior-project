@@ -148,14 +148,13 @@ class Control:
             if self.TKVARS[index][1].get() != "":
                 s["weight"] = int(self.TKVARS[index][1].get())
             else:
-                print("HIT")
                 s["weight"] = 1
         globals()[self.MAJOR] = {"subjects":self.subjects}
         with open(f"./subjects/{self.MAJOR}.json","w") as json_file:
             json.dump(globals()[self.MAJOR],json_file)
         
     def renderGraph(self):
-        proc = Process(target=os.system,args=(f"python3 graph.py --major {self.MAJOR}",))
+        proc = Process(target=os.system,args=(f"python3.6 graph.py --major {self.MAJOR}",))
         PROCESSES.append(proc)
         proc.daemon = True
         proc.start()

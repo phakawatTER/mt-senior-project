@@ -23,8 +23,10 @@ args = vars(parser.parse_args())
 MAJOR = args["major"]
 if MAJOR:
     MAJOR = MAJOR.upper()
-    
 
+print(MAJOR) 
+    
+    
 HISTORY = []
 HISTORY_INDEX = 0
 SCHOOL = ""
@@ -41,7 +43,7 @@ elif not MAJOR:
     MAJOR = "SCM"
     SCHOOL = "Management Techonology (SCM)"
     HISTORY = [copy.deepcopy(scm["subjects"])] # DEEP COPY BECAUSE WE WANT TO COPY
-print(f"CURRENT SCHOOL IS {SCHOOL}")
+print(f"Current school is {SCHOOL}")
     
 LEVEL_SUBTRACTION = 1
 SIZE = plt.rcParams["figure.figsize"]
@@ -50,10 +52,10 @@ SIZE[1] = 7.5
 IS_FIRST = True
 SCHOOL_NODE_SIZE = 2000
 NODE_SIZE_MULTIPLIER = 160
-SCHOOL_NODE_COLOR = "#d463a9"
+SCHOOL_NODE_COLOR = "#660099"
 WEIGHT_COLORS = {
     0:"#50d0ff",
-    1:"#7de86c",
+    1:"#00ff38",
     2:"#ff9e3c",
     3:"#ff2f2f"
 }
@@ -177,7 +179,6 @@ class Render:
     def draw(self):
         G = nx.DiGraph()
         self.subjects = HISTORY[HISTORY_INDEX]  # HISTORY STACK ON GIVEN CURRENT HISTORY INDEX
-        # self.NODE_COORDINATES = {} # COORDINATES OF ALL NODES
         rootNodes = [] # LIST OF ALL PARENT NODES
         childNodes = [] # LIST OF ALL CHILD NODES
         NODE_CHILD_COUNTS = {}
@@ -325,15 +326,7 @@ class Render:
             alpha=0.85,
             linewidths=1
         )
-        # DRAW LABELS
-        nx.draw_networkx_labels(
-            G,
-            pos,
-            font_size=7,
-            labels=labels,
-            # font_weight="bold"
-        )
-        # # DRAW SCHOOL EDGES
+        # DRAW SCHOOL EDGES
         nx.draw_networkx_edges(
             G,
             pos,
@@ -342,6 +335,26 @@ class Render:
             # width=[d["weight"] for (u,v,d) in G.edges(data=True)],
             alpha=0.80
         )
+        school_pos = {SCHOOL_LABEL:pos[SCHOOL_LABEL]}
+        del pos[SCHOOL_LABEL]
+        del labels[SCHOOL_LABEL]
+        # DRAW LABELS
+        nx.draw_networkx_labels(
+            G,
+            pos,
+            font_size=5,
+            labels=labels,
+            # font_weight="bold"
+        )
+        # DRAW SCHOOL LABEL
+        nx.draw_networkx_labels(
+            G,
+            school_pos,
+            labels={SCHOOL_LABEL:SCHOOL_LABEL},
+            font_size=5,
+            font_color="#ffffff"
+        )
+        
         
         plt.axis("off") # TURN OFF AXIS
         title_obj = plt.title(f"School of {SCHOOL}") # SET TITLE
