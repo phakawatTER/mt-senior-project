@@ -13,7 +13,7 @@ with open("./subjects/mis.json") as infile:
 with open("./subjects/scm.json") as infile:
     scm = json.load(infile)
     
-THEME_COLOR = "#fff"
+THEME_COLOR = "#ffffff"
 TITLE_COLOR = "#000"
 PROCESSES = []
 class Control:
@@ -27,10 +27,14 @@ class Control:
         self.mainframe=Frame(self.app,bg=THEME_COLOR)
         self.TKVARS = []
         self.mainframe.grid(row=0,column=0)
-        self.canvas=Canvas(self.mainframe,bg=THEME_COLOR,width=600,height=500)
+        self.canvas=Canvas(self.mainframe,bg=THEME_COLOR,width=750,height=500)
         self.tkvar = StringVar(self.app)
         self.choices = {
             "Management Techonology (MIS)", "Management Techonology (SCM)", "Engineering Management (EM)"}
+        self.subject_types = {
+            "General",
+            "Free Elective"
+        }
         self.tkvar.set("Management Techonology (MIS)")  # set the default option
         self.subjects = mis["subjects"]
         self.MAJOR = "mis"
@@ -44,30 +48,39 @@ class Control:
         for s in self.subjects:
             tkVar1 = StringVar()
             tkVar1.set(s["subject"])
-            tkVar2 = StringVar()
+            tkVar2 = StringVar(0)
+            tkVar3 = StringVar()
+            tkVar3.set("General")
             if "weight" in s:
                 tkVar2.set(s["weight"])
-            self.TKVARS.append((tkVar1,tkVar2))
+            if "type" in s:
+                tkVar3.set(s["type"])
+            self.TKVARS.append((tkVar1,tkVar2,tkVar3))
         
         self.vbar=Scrollbar(self.mainframe,orient=VERTICAL)
         self.vbar.pack(side=RIGHT,fill=Y)
         self.vbar.config(command=self.canvas.yview)
         self.canvas.config(yscrollcommand=self.vbar.set)
+        self.canvas.bind_all("<MouseWheel>",self._on_mousewheel)
         self.addframe()
         self.canvas.pack()
         self.app.mainloop()
+        
+    def _on_mousewheel(self,event):
+        self.canvas.yview_scroll(int(-1*(event.delta)), "units")
         
     def addframe(self):
         self.frame = Frame(self.canvas,bg=THEME_COLOR)
         # Dictionary with options
         Label(self.frame, text=f"Select School",bg=THEME_COLOR,fg=TITLE_COLOR).grid(row=0, column=1, sticky="N")
-        self.popupMenu2 = OptionMenu(self.frame, self.tkvar, *self.choices)
-        self.popupMenu2.configure(bg=THEME_COLOR)
-        self.popupMenu2.grid(row=1, column=1, sticky="N")
+        self.schoolOptions = OptionMenu(self.frame, self.tkvar, *self.choices)
+        self.schoolOptions.configure(bg=THEME_COLOR)
+        self.schoolOptions.grid(row=1, column=1, sticky="N")
         Label(self.frame,text="Subject",bg=THEME_COLOR,fg=TITLE_COLOR).grid(row=2,column=1,sticky="N")
         Label(self.frame,text="Weight",bg=THEME_COLOR,fg=TITLE_COLOR).grid(row=2,column=2,sticky="N")
+        Label(self.frame,text="Type",bg=THEME_COLOR,fg=TITLE_COLOR).grid(row=2,column=3,sticky="N")
         self.app.update()
-        row_size = self.popupMenu2.winfo_height()
+        row_size = self.schoolOptions.winfo_height()
         self.button_1 = Button(self.frame, text='View Path',highlightbackground=THEME_COLOR,
                                command=lambda: self.renderGraph())
         self.button_1 . grid(row=1, column=2, sticky="N")
@@ -75,7 +88,7 @@ class Control:
         # # Update content 
         self.updateEditFrame()
         self.canvas.create_window((0,0),window=self.frame,anchor="nw")
-        self.canvas.configure(scrollregion=(0,0,500,(row_size+2)*len(self.subjects)))
+        self.canvas.configure(scrollregion=(0,0,500,(row_size+3)*len(self.subjects)))
     
     def updateEditFrame(self):
         row = 3
@@ -87,8 +100,10 @@ class Control:
             subject_entry.grid(row=row, column=1, sticky="N")
             weight_entry = Entry(self.frame,textvariable=self.TKVARS[index][1], width=20,highlightbackground=THEME_COLOR)
             weight_entry.grid(row=row, column=2,sticky="N")
+            subject_type_option = OptionMenu(self.frame, self.TKVARS[index][2], *self.subject_types)
+            subject_type_option.grid(row=row, column=3,sticky="N")
             Button(self.frame,text="edit preq.",highlightbackground=THEME_COLOR,command=lambda s=index:self.addTopLevel(s))\
-                .grid(row=row,column=3,sticky="N")
+                .grid(row=row,column=4,sticky="N")
         addBtn = Button(self.frame,text="+add",highlightbackground=THEME_COLOR,command=lambda:self.addRow())
         addBtn.grid(column=0,row=row+1)
         updateBtn = Button(self.frame,text="update",highlightbackground=THEME_COLOR,command=lambda:self.update())
@@ -117,10 +132,14 @@ class Control:
         for s in self.subjects:
             tkVar1 = StringVar()
             tkVar1.set(s["subject"])
-            tkVar2 = StringVar()
+            tkVar2 = StringVar(0)
+            tkVar3 = StringVar()
+            tkVar3.set("General")
             if "weight" in s:
                 tkVar2.set(s["weight"])
-            self.TKVARS.append((tkVar1,tkVar2))
+            if "type" in s:
+                tkVar3.set(s["type"])
+            self.TKVARS.append((tkVar1,tkVar2,tkVar3))
         self.updateFrame()
         
     def addRow(self):
@@ -128,7 +147,9 @@ class Control:
             "subject":"",
             "school":[self.MAJOR.upper()]
         })
-        self.TKVARS.append((StringVar(),StringVar()))
+        TYPE = StringVar()
+        TYPE.set("General")
+        self.TKVARS.append((StringVar(),StringVar(),TYPE))
         self.updateFrame()
         
     def removeRow(self,index):
@@ -149,12 +170,14 @@ class Control:
                 s["weight"] = int(self.TKVARS[index][1].get())
             else:
                 s["weight"] = 1
+            s["type"] = self.TKVARS[index][2].get()
         globals()[self.MAJOR] = {"subjects":self.subjects}
         with open(f"./subjects/{self.MAJOR}.json","w") as json_file:
             json.dump(globals()[self.MAJOR],json_file)
         
     def renderGraph(self):
-        proc = Process(target=os.system,args=(f"python3.6 graph.py --major {self.MAJOR}",))
+        # proc = Process(target=os.system,args=(f"python3.6 graph.py --major {self.MAJOR}",))
+        proc = Process(target=os.system,args=(f"python3 graph.py --major {self.MAJOR}",))
         PROCESSES.append(proc)
         proc.daemon = True
         proc.start()
