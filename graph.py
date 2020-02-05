@@ -318,7 +318,6 @@ class Render:
         self.FIRST = False   
         labels={}
         for index,data in enumerate(G.nodes(data=True),start=0):
-            print(data)
             subject = data[0]
             attributes = data[1]
             labels[subject] = attributes["text"]

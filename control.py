@@ -15,7 +15,6 @@ with open("./subjects/scm.json") as infile:
     
 THEME_COLOR = "#ffffff"
 TITLE_COLOR = "#000"
-PROCESSES = []
 class Control:
     def __init__(self):
         self.app = Tk()
@@ -29,8 +28,7 @@ class Control:
         self.mainframe.grid(row=0,column=0)
         self.canvas=Canvas(self.mainframe,bg=THEME_COLOR,width=750,height=500)
         self.tkvar = StringVar(self.app)
-        self.choices = {
-            "Management Techonology (MIS)", "Management Techonology (SCM)", "Engineering Management (EM)"}
+        self.choices = {"Management Techonology (MIS)", "Management Techonology (SCM)", "Engineering Management (EM)"}
         self.subject_types = {
             "General",
             "Free Elective"
@@ -111,14 +109,15 @@ class Control:
         
         
     def addTopLevel(self,index):
-        try:
-            if self.toplevel is None or not self.toplevel.window.winfo_exists():
-                self.toplevel = EditSubject(self.app,self.subjects[index],self.MAJOR)
-            else:
-                self.toplevel.window.lift(self.app)
-        except Exception as err:
-            print(err)
-            self.toplevel = EditSubject(self.app,self.subjects[index],self.MAJOR)
+        pass
+        # try:
+        #     if self.toplevel is None or not self.toplevel.window.winfo_exists():
+        #         self.toplevel = EditSubject(self.app,self.subjects[index],self.MAJOR)
+        #     else:
+        #         self.toplevel.window.lift(self.app)
+        # except Exception as err:
+        #     print(err)
+        #     self.toplevel = EditSubject(self.app,self.subjects[index],self.MAJOR)
         
     def setSubjects(self):
         if self.MAJOR == "MIS":
@@ -176,10 +175,8 @@ class Control:
             json.dump(globals()[self.MAJOR],json_file)
         
     def renderGraph(self):
-        # proc = Process(target=os.system,args=(f"python3.6 graph.py --major {self.MAJOR}",))
-        proc = Process(target=os.system,args=(f"python3 graph.py --major {self.MAJOR}",))
-        PROCESSES.append(proc)
-        proc.daemon = True
+        proc = Process(target=os.system,args=(f"python3.6 graph.py --major {self.MAJOR}",))
+        # proc = Process(target=os.system,args=(f"python3 graph.py --major {selfs.MAJOR}",))
         proc.start()
         
         
