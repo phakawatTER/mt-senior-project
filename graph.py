@@ -34,7 +34,7 @@ SCHOOL_NODE_SIZE = 2000
 NODE_SIZE_MULTIPLIER = 250
 SCHOOL_NODE_COLOR = "#bada55"
 TYPE_COLORS = {
-    "Free Elective": "#00ff38",
+    "Free Elective": "#FA8072",
     "General": "#50d0ff"
 }
 
@@ -192,17 +192,18 @@ class Render:
         ROOT_LEVEL = 0
         PREV_LEVEL_Y = -4  # Y COORDINATE OF PREV ROOT LEVEL
         PREV_LEVEL_Y_LEFT = 0
+        COUNT_RIGHT_NODES = 0
         # STRING TO BE DISPLAYED ON SCHOOL NODE
         SCHOOL_LABEL = self.SCHOOL.replace(" ", "\n")
 
         # FILTER ROOT NODE
         for node in copy.deepcopy(self.subjects):
-            if "prerequisite" not in node:
+            if len(node["prerequisite"]) == 0:
                 rootNodes.append(node)
 
         # FILTER CHILD NODE ** NODE THAT HAS PREREQUISITE
         for node in copy.deepcopy(self.subjects):
-            if "prerequisite" in node:
+            if len(node["prerequisite"]) > 0:
                 childNodes.append(node)
 
         # sorting for subject that doesnt have วิชาต่อ
@@ -246,7 +247,8 @@ class Render:
                 PARENT_CURRENT_Y = ROOT_LEVEL
                 if not has_no_next:
                     PARENT_CURRENT_Y = PREV_LEVEL_Y
-                    PARENT_CURRENT_X = 1 + math.pow(-1, abs(ROOT_LEVEL))*0.07
+                    PARENT_CURRENT_X = 1 + math.pow(-1, abs(COUNT_RIGHT_NODES))*0.2
+                    COUNT_RIGHT_NODES += 1
                 else:
                     PARENT_CURRENT_Y = PREV_LEVEL_Y_LEFT
                     PARENT_CURRENT_X = -1 + math.pow(-1, abs(ROOT_LEVEL))*0.2
@@ -271,7 +273,7 @@ class Render:
 
             # ADD EDGE FROM ROOT NODE TO SCHOOL NODE
             G.add_edge(SCHOOL_LABEL, subject, weight=weight,
-                       root=SCHOOL_LABEL, color=SCHOOL_NODE_COLOR)
+                       root=SCHOOL_LABEL, color=TYPE_COLORS[subject_type])
             PARENTS = [subject]
             while True:
                 parent = PARENTS.pop(0)  # POP FIRST ELEMENT OF PARENTS
@@ -279,7 +281,6 @@ class Render:
                 if parent not in NODE_CHILD_COUNTS:
                     NODE_CHILD_COUNTS[parent] = 0
                 for child in childNodes:
-                    # print(f'{parent} --> {str(child["prerequisite"])} , {MAJOR}')
                     # CHECK IF PARENT HAS ANY CHILDREN
                     # AND IF SUBJECT IS INTERSECT WITH CURRENT MAJOR eg. EM ,SCM ,MIS
                     if parent in child["prerequisite"] and MAJOR in child["school"]:
@@ -300,6 +301,8 @@ class Render:
                             if self.FIRST:
                                 # COORDINATE OF THIS NODE PARENT
                                 PARENT_COORDINATES = self.NODE_COORDINATES[_prereq]
+                                PARENT_TYPE = [node["type"] for node in self.subjects if node["subject"] == _prereq][0]
+                                print(PARENT_TYPE)
                                 # X COORDINATE
                                 CURRENT_X = PARENT_COORDINATES[0] + \
                                     2+math.pow(-1, abs(index))*0.2

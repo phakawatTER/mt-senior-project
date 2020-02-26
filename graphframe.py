@@ -1,5 +1,6 @@
 import sys
 from tkinter import *
+from tkinter import messagebox
 from graph import Render
 class GraphFrame:
     def __init__(self,major=None,master=None):
@@ -14,6 +15,8 @@ class GraphFrame:
         self.addToolFrame()
         self.graph.canvas.get_tk_widget().pack(side=BOTTOM)
         def on_closing():
+            if not messagebox.askokcancel("Quit","Do you want to quit?"):
+                return
             self.graph.plt.close()
             self.app.destroy()
         self.app.protocol("WM_DELETE_WINDOW",on_closing)
