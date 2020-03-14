@@ -191,7 +191,7 @@ class Render:
         noNextSubjects = []
         NODE_CHILD_COUNTS = {}
         ROOT_LEVEL = 0
-        PREV_LEVEL_Y = -4  # Y COORDINATE OF PREV ROOT LEVEL
+        PREV_LEVEL_Y_RIGHT = -4  # Y COORDINATE OF PREV ROOT LEVEL
         PREV_LEVEL_Y_LEFT = 0
         COUNT_RIGHT_NODES = 0
         # STRING TO BE DISPLAYED ON SCHOOL NODE
@@ -252,11 +252,11 @@ class Render:
             if self.FIRST:
 
                 PARENT_CURRENT_Y = ROOT_LEVEL
-                if not has_no_next:
-                    PARENT_CURRENT_Y = PREV_LEVEL_Y
+                if not has_no_next: # IS RIGHT SIDE
+                    PARENT_CURRENT_Y = PREV_LEVEL_Y_RIGHT
                     PARENT_CURRENT_X = 1 + math.pow(-1, abs(COUNT_RIGHT_NODES))*0.2
                     COUNT_RIGHT_NODES += 1
-                else:
+                else: # IS LEFT SIDE
                     PARENT_CURRENT_Y = PREV_LEVEL_Y_LEFT
                     PARENT_CURRENT_X = -1 + math.pow(-1, abs(ROOT_LEVEL))*0.2
                 self.NODE_COORDINATES[subject] = (
@@ -284,6 +284,8 @@ class Render:
             PARENTS = [subject]
             while True:
                 parent = PARENTS.pop(0)  # POP FIRST ELEMENT OF PARENTS
+                parent_child_x = []
+                parent_child_y = []
                 index = 0  # INDEX
                 if parent not in NODE_CHILD_COUNTS:
                     NODE_CHILD_COUNTS[parent] = 0
@@ -309,26 +311,34 @@ class Render:
                                 # COORDINATE OF THIS NODE PARENT
                                 PARENT_COORDINATES = self.NODE_COORDINATES[_prereq]
                                 PARENT_TYPE = [node["type"] for node in self.subjects if node["subject"] == _prereq][0]
-                                print(PARENT_TYPE)
                                 # X COORDINATE
-                                CURRENT_X = PARENT_COORDINATES[0] + \
-                                    2+math.pow(-1, abs(index))*0.2
-                                CURRENT_Y = PARENT_COORDINATES[1] + \
-                                    (-index)  # Y COORDINATE
+                                CURRENT_X = round(PARENT_COORDINATES[0] + \
+                                    2+math.pow(-1, abs(index))*0.2,2)
+                                CURRENT_Y = round(PARENT_COORDINATES[1] -index,2) # Y COORDINATE
 
                                 pos = (CURRENT_X, CURRENT_Y)
                                 ## sorting for overlappeds coordinates ##
                                 coords = [self.NODE_COORDINATES[key]
                                           for key in self.NODE_COORDINATES if key != SCHOOL_LABEL]
+                                
+                                ## matched coordinates list
                                 matched = [
                                     c for c in coords if str(c) == str(pos)]
-                                if len(matched) != 0:
+                                if len(matched) != 0: # if overlapped coordinate
                                     CURRENT_Y -= 1
-                                    pos = (CURRENT_X, CURRENT_Y)
+                                    
+                                if CURRENT_Y in parent_child_y:
+                                    CURRENT_Y -= 1
+                                    
+                                pos = (CURRENT_X, CURRENT_Y)
+                                parent_child_y.append(CURRENT_Y)
+                                parent_child_x.append(CURRENT_X)
+                                ## if subjec is not in node coordinates dict then put it in...
                                 if _subject not in self.NODE_COORDINATES:
                                     self.NODE_COORDINATES[_subject] = pos
                                 self.SUBJECT_PATHS[subject].append(_subject)
                                 Y_COORDINATES.append(CURRENT_Y)
+                                
                             else:
                                 CURRENT_X = self.NODE_COORDINATES[_subject][0]
                                 CURRENT_Y = self.NODE_COORDINATES[_subject][1]
@@ -355,10 +365,10 @@ class Render:
             if not has_no_next:
                 # UPDATE LEVEL OF ROOT NODE
                 if len(Y_COORDINATES) == 0:
-                    PREV_LEVEL_Y = PREV_LEVEL_Y - LEVEL_SUBTRACTION  # UPDATE PREVIOUS Y COORDINATE
+                    PREV_LEVEL_Y_RIGHT = PREV_LEVEL_Y_RIGHT - LEVEL_SUBTRACTION  # UPDATE PREVIOUS Y COORDINATE
                 else:
                     minY = min(Y_COORDINATES)
-                    PREV_LEVEL_Y = minY - LEVEL_SUBTRACTION
+                    PREV_LEVEL_Y_RIGHT = minY - LEVEL_SUBTRACTION
             else:
                 PREV_LEVEL_Y_LEFT -= 1
         # END FOR LOOP

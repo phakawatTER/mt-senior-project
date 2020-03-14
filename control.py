@@ -147,7 +147,7 @@ class Control:
         self.schoolOptions.grid(row=1, column=2, sticky="NESW")
 
         self.row_size = self.schoolOptions.winfo_height()
-        self.button_1 = Button(frame, text='View Path', bg="#318ee8", fg="#fff",
+        self.button_1 = Button(frame, text='View Path', bg="#318ee8", fg="#000",
                                command=lambda: self.renderGraph())
         self.button_1 . grid(row=1, column=3, sticky="W")
         frame2 = Frame(self.app)
@@ -197,7 +197,7 @@ class Control:
         input_group_frame = Frame(self.input_frame)
         input_group_frame.grid(row=index+1, column=0, sticky="EW")
 
-        Button(input_group_frame, text="remove", bg="#e6245c", fg="white", highlightbackground=THEME_COLOR, command=lambda s=index: self.removeRow(s))\
+        Button(input_group_frame, text="remove", bg="#e6245c", fg="#000", highlightbackground=THEME_COLOR, command=lambda s=index: self.removeRow(s))\
             .grid(row=index+1, column=0, sticky="N")
         subject_entry = Entry(
             input_group_frame, textvariable=self.TKVARS[index][0], highlightbackground=THEME_COLOR)
