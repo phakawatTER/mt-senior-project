@@ -2,7 +2,7 @@ import json
 import os
 from multiprocessing import Process
 import copy
-from graphframe import GraphFrame
+from graph import Render
 from tkinter import *
 from sys import platform
 from tkinter import messagebox
@@ -354,13 +354,7 @@ class Control:
             json.dump(globals()[self.MAJOR], json_file)
 
     def renderGraph(self):
-        try:
-            ## destroy prev window before open up a new one
-            self.graphframe.app.destroy()
-        except:
-            pass
-        self.graphframe = GraphFrame(major=self.MAJOR.upper(), master=self.app)
-        self.graphframe.app.mainloop()
+        Render(major=self.MAJOR)
 
 
 if __name__ == "__main__":
