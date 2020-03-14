@@ -1,29 +1,30 @@
 import json
 import os
 from multiprocessing import Process
-import sys
 import copy
-from editsubject import EditSubject
 from graphframe import GraphFrame
 from tkinter import *
+from sys import platform
 from tkinter import messagebox
+current_directory = os.path.dirname(__file__)
+data_dir = os.path.join(current_directory,"subjects")
 ### LOAD JSON FILE ###
-with open("./subjects/em.json") as infile:
-    em = json.load(infile)
-with open("./subjects/mis.json") as infile:
-    mis = json.load(infile)
-with open("./subjects/scm.json") as infile:
-    scm = json.load(infile)
-
+for file in os.listdir(data_dir):
+    name,ext = os.path.splitext(file)
+    if ext == ".json":
+        try:
+            with open(os.path.join(data_dir,file)) as infile:
+                globals()[name] = json.load(infile)
+        except:
+            pass
+        
 THEME_COLOR = "#ffffff"
 TITLE_COLOR = "#000"
-
 
 class Control:
     def __init__(self):
         self.app = Tk()
         self.app.title("MT Senior Project")
-        # self.app.attributes("-alpha",0.8)
         self.app.resizable(False, False)
         self.graphframe = None
         self.search_matched = False
@@ -31,16 +32,29 @@ class Control:
         self.yscroll = 0
         self.mainframe = Frame(self.app, bg=THEME_COLOR)
         self.TKVARS = []
-        self.mainframe.grid(row=1)
+        self.mainframe.grid(row=2)
         self.canvas = Canvas(
-            self.mainframe, bg=THEME_COLOR, height=500)
+            self.mainframe, bg=THEME_COLOR, height=350)
         self.tkvar = StringVar(self.app)
+        ## list of school in SIIT
         self.choices = {
-            "Management Techonology (MIS)", "Management Techonology (SCM)", "Engineering Management (EM)"}
+            "Management Techonology (MIS)", 
+            "Management Techonology (SCM)", 
+            "Engineering Management (EM)",
+            "Information Technology (IT)",
+            "Industrial Engineering (IE)",
+            "Mechinical Engineering (ME)",
+            "Electrical Engineering (EE)",
+            "Computer Engineering (CPE)",
+            "Civil Engineering (CE)",
+            "Chemical Engineering (ChE)",
+            
+        }
         self.year_choices = {"year 1", "year 2", "year 3", "year 4"}
         self.subject_types = {
             "General",
-            "Free Elective"
+            "Free Elective",
+            "Senior Project"
         }
         # set the default option
         self.tkvar.set("Management Techonology (MIS)")
@@ -136,12 +150,24 @@ class Control:
         self.button_1 = Button(frame, text='View Path', bg="#318ee8", fg="#fff",
                                command=lambda: self.renderGraph())
         self.button_1 . grid(row=1, column=3, sticky="W")
+        frame2 = Frame(self.app)
+        frame2.grid(row=1,sticky="EW")
+        Label(frame2, text="", bg=THEME_COLOR,width=8,
+            fg=TITLE_COLOR).grid(row=3, column=1,sticky="W")
+        Label(frame2, text="Subject", bg=THEME_COLOR,width=10,
+            fg=TITLE_COLOR).grid(row=3, column=2,sticky="W")
+        Label(frame2, text="Weight", bg=THEME_COLOR,width=8,
+            fg=TITLE_COLOR).grid(row=3, column=3,sticky="W")
+        Label(frame2, text="Type", bg=THEME_COLOR,width=15,
+            fg=TITLE_COLOR).grid(row=3, column=4,sticky="W")
+        Label(frame2, text="Add Prerequisite", bg=THEME_COLOR,width=12,
+            fg=TITLE_COLOR).grid(row=3, column=5,sticky="E")
 
     def add_bottom(self):
         # BOTTOM SECTION
         self.bottom_frame = Frame(self.app)
-        self.bottom_frame.grid(row=2)
-        addBtn = Button(self.bottom_frame, text="+add new subject", bg="#88c878", fg=THEME_COLOR,
+        self.bottom_frame.grid(row=3)
+        addBtn = Button(self.bottom_frame, text="+ new subject", bg="#88c878", fg=THEME_COLOR,
                         highlightbackground=THEME_COLOR, command=lambda: self.addRow())
         addBtn.grid(column=0, row=1)
         updateBtn = Button(self.bottom_frame, text="update", bg="#318ee8", fg="#fff",
@@ -164,57 +190,62 @@ class Control:
         render_list = [i for i in range(0, len(self.TKVARS))]
         if self.search_matched:
             render_list = self.matched_index
-        for index in render_list:
+        for pos,index in enumerate(render_list,start=0):
             self.addInputChildFrame(index)
 
     def addInputChildFrame(self, index):
         input_group_frame = Frame(self.input_frame)
-
         input_group_frame.grid(row=index+1, column=0, sticky="EW")
-        if index == 0:  # add column header
-            Label(input_group_frame, text="Subject", bg=THEME_COLOR,
-                  fg=TITLE_COLOR).grid(row=index, column=1)
-            Label(input_group_frame, text="Weight", bg=THEME_COLOR,
-                  fg=TITLE_COLOR).grid(row=index, column=2)
-            Label(input_group_frame, text="Type", bg=THEME_COLOR,
-                  fg=TITLE_COLOR).grid(row=index, column=3)
-            Label(input_group_frame, text="Add Prerequisite", bg=THEME_COLOR,
-                  fg=TITLE_COLOR).grid(row=index, column=4)
 
         Button(input_group_frame, text="remove", bg="#e6245c", fg="white", highlightbackground=THEME_COLOR, command=lambda s=index: self.removeRow(s))\
             .grid(row=index+1, column=0, sticky="N")
         subject_entry = Entry(
             input_group_frame, textvariable=self.TKVARS[index][0], highlightbackground=THEME_COLOR)
         subject_entry.grid(row=index+1, column=1, sticky="N")
+        self.TKVARS[index][0].trace("w",lambda name,_index,mode,var=self.TKVARS[index][0]:self.capitalize_input(var))
         subject_entry.configure(width=10)
         weight_entry = Entry(
             input_group_frame, textvariable=self.TKVARS[index][1], width=20, highlightbackground=THEME_COLOR)
         weight_entry.grid(row=index+1, column=2, sticky="N")
+        self.TKVARS[index][1].trace("w",lambda name,_index,mode,var=self.TKVARS[index][1]:self.numeric_input(var))
         weight_entry.configure(width=5)
         subject_type_option = OptionMenu(
             input_group_frame, self.TKVARS[index][2], *self.subject_types)
         subject_type_option.configure(width=15)
         subject_type_option.grid(row=index+1, column=3, sticky="N")
 
+        ## Prerequisite subjects
         prerequisite_frame = Frame(input_group_frame)
         prerequisite_frame.grid(row=index+1, column=4)
         # loop over preqrequsiite list
         for i, var in enumerate(self.TKVARS[index][3], start=0):
             current_row = index+i+1
-            # prereq_frame = Frame(prerequisite_frame)
-            # prereq_frame.grid(row=current_row, column=4, sticky="E")
             prereq_input = Entry(prerequisite_frame, textvariable=var)
             prereq_input.configure(width=8)
             prereq_input.grid(row=current_row, column=1, sticky="W", padx=31.5)
-            Button(prerequisite_frame, text="x", command=lambda target=(index, i): self.remove_prerequsite(target)).grid(
+            Button(prerequisite_frame, text="x",command=lambda target=(index, i): self.remove_prerequsite(target)).grid(
                 row=current_row, column=0, sticky="W", columnspan=2)
+            var.trace("w",lambda name,_index,mode,var=var:self.capitalize_input(var))
         current_row = (index+1) + len(self.TKVARS[index][3])
-        Button(input_group_frame, text="+ add", command=lambda _index=index: self.add_prerequisite(_index)).grid(
+        Button(input_group_frame, text="+ prerequisite", command=lambda _index=index: self.add_prerequisite(_index)).grid(
             row=current_row, column=4, sticky="w")
-        # old method***
-        # Button(input_group_frame, text="edit prerequisite", bg="#88c878", fg="#fff", highlightbackground=THEME_COLOR, command=lambda s=row: self.openEditPreqWindow(s))\
-        #     .grid(row=row, column=4, sticky="N")
-
+        
+    # callback  function to automatically capitalize input
+    def capitalize_input(*args):
+        sv = args[1]
+        sv.set(sv.get().upper())
+    
+    def numeric_input(*args):
+        sv = args[1]
+        try:
+            current_char = sv.get()[-1]
+            if not current_char.isnumeric():
+                messagebox.showinfo("Input Error","Please enter numeric input...")
+                current_char = "0"
+        except:
+            current_char = "0"
+        sv.set(current_char)
+        
     # add empty prerequisite entry to input frame
     def add_prerequisite(self, index):
         self.TKVARS[index][3].append(StringVar(self.app))
@@ -232,18 +263,6 @@ class Control:
         else:
             self.TKVARS[i][3].pop(j)
             self.updateFrame()
-
-    # def openEditPreqWindow(self, index):
-    #     # pass
-    #     try:
-    #         if self.editsubject_toplevel is None or not self.editsubject_toplevel.window.winfo_exists():
-    #             self.editsubject_toplevel = EditSubject(
-    #                 self.app, self.subjects[index], self.MAJOR)
-    #         else:
-    #             self.editsubject_toplevel.window.lift(self.app)
-    #     except Exception as err:
-    #         self.editsubject_toplevel = EditSubject(
-    #             self.app, self.subjects[index], self.MAJOR)
 
     def load_subject_data(self):
         for s in self.subjects:
@@ -285,7 +304,6 @@ class Control:
         weight.set(1)
         self.TKVARS.append((StringVar(self.app), weight,
                             s_type, []))
-
         self.addInputChildFrame(len(self.TKVARS)-1)
         self.updateScrollRegion()
         self.canvas.yview_moveto(self.frame.winfo_height())
@@ -302,11 +320,8 @@ class Control:
     def updateScrollRegion(self):
         self.app.update()
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-        # self.canvas.configure(scrollregion=(
-        #     0, self.frame.winfo_width(), 500, self.frame.winfo_height()))
 
     def updateFrame(self, index=None):
-
         for i, item in enumerate(self.input_frame.winfo_children(), start=0):
             item.grid_forget()
             item.destroy()
@@ -340,6 +355,7 @@ class Control:
 
     def renderGraph(self):
         try:
+            ## destroy prev window before open up a new one
             self.graphframe.app.destroy()
         except:
             pass

@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 from sys import platform as sys_pf
 import networkx as nx
 import tkinter as tk
-
-
+import os
+current_dir = os.path.dirname(__file__)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--major", "-m", required=False,
@@ -35,7 +35,8 @@ NODE_SIZE_MULTIPLIER = 250
 SCHOOL_NODE_COLOR = "#bada55"
 TYPE_COLORS = {
     "Free Elective": "#FA8072",
-    "General": "#50d0ff"
+    "General": "#50d0ff",
+    "Senior Project":"#ff0000"
 }
 
 
@@ -43,7 +44,7 @@ class Render:
     def __init__(self,major=MAJOR ,master=None):
         
         ### LOAD SUBJECTS FROM JSON FILES ###
-        with open(f"./subjects/{major.lower()}.json") as infile:
+        with open(os.path.join(current_dir,"subjects","{}.json".format(major.lower()))) as infile:
             subject_data = json.load(infile)
         self.plt = plt
         plt.clf()
@@ -198,13 +199,19 @@ class Render:
 
         # FILTER ROOT NODE
         for node in copy.deepcopy(self.subjects):
-            if len(node["prerequisite"]) == 0:
+            try:
+                if len(node["prerequisite"]) == 0:
+                    rootNodes.append(node)
+            except:
                 rootNodes.append(node)
 
         # FILTER CHILD NODE ** NODE THAT HAS PREREQUISITE
         for node in copy.deepcopy(self.subjects):
-            if len(node["prerequisite"]) > 0:
-                childNodes.append(node)
+            try:
+                if len(node["prerequisite"]) > 0:
+                    childNodes.append(node)
+            except:
+                pass
 
         # sorting for subject that doesnt have วิชาต่อ
         for node in rootNodes:

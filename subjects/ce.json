@@ -1,0 +1,1 @@
+{"subjects": [{"subject": "TU120", "school": ["CE"], "weight": 3, "type": "General", "prerequisite": []}, {"subject": "TU100", "school": ["CE"], "weight": 4, "type": "General", "prerequisite": ["TU120"]}]}
