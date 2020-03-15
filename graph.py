@@ -179,7 +179,26 @@ class Render:
             self.HISTORY_INDEX = len(self.HISTORY)-1
             self.redraw()
         ######***** END ON CLICK CALLBACK FUNCTION *****######
-
+        
+    # ## sorted by number of child 
+    # def sort_subject (self):
+    #     subject_child = {}
+    #     for s in self.subjects:
+    #         subject = s["subject"]
+    #         prerequisite = s["prerequisite"]
+    #         if len(prerequisite) > 0: # child subject
+    #             for p in prerequisite:
+    #                 if p not in subject_child:
+    #                     subject_child[p] = []
+    #                 subject_child[p].append(subject)
+    #         else:
+    #             subject_child[subject] = []
+    #     for subject in copy.deepcopy(subject_child) :
+    #         if len(subject_child[subject]) == 0:
+    #             del subject_child[subject]
+    #     sorted_list = []
+    #     for s in subject_child:
+    #         print(s,subject_child[s])
     # Draw everything
     def draw(self):
         global MAJOR
@@ -250,15 +269,16 @@ class Render:
                 has_no_next = True
 
             if self.FIRST:
-
                 PARENT_CURRENT_Y = ROOT_LEVEL
                 if not has_no_next: # IS RIGHT SIDE
                     PARENT_CURRENT_Y = PREV_LEVEL_Y_RIGHT
-                    PARENT_CURRENT_X = 1 + math.pow(-1, abs(COUNT_RIGHT_NODES))*0.2
+                    # PARENT_CURRENT_X = 1 + math.pow(-1, abs(COUNT_RIGHT_NODES))*0.2
+                    PARENT_CURRENT_X = 1 
                     COUNT_RIGHT_NODES += 1
                 else: # IS LEFT SIDE
                     PARENT_CURRENT_Y = PREV_LEVEL_Y_LEFT
-                    PARENT_CURRENT_X = -1 + math.pow(-1, abs(ROOT_LEVEL))*0.2
+                    # PARENT_CURRENT_X = -1 + math.pow(-1, abs(ROOT_LEVEL))*0.2
+                    PARENT_CURRENT_X = -1 
                 self.NODE_COORDINATES[subject] = (
                     PARENT_CURRENT_X, PARENT_CURRENT_Y)
                 self.SUBJECT_PATHS[subject] = []
@@ -277,7 +297,6 @@ class Render:
                     text=f"{subject}({weight})",
                     color=TYPE_COLORS[subject_type]
                 )
-
             # ADD EDGE FROM ROOT NODE TO SCHOOL NODE
             G.add_edge(SCHOOL_LABEL, subject, weight=weight,
                        root=SCHOOL_LABEL, color=TYPE_COLORS[subject_type])
@@ -311,9 +330,11 @@ class Render:
                                 # COORDINATE OF THIS NODE PARENT
                                 PARENT_COORDINATES = self.NODE_COORDINATES[_prereq]
                                 PARENT_TYPE = [node["type"] for node in self.subjects if node["subject"] == _prereq][0]
+                                
                                 # X COORDINATE
-                                CURRENT_X = round(PARENT_COORDINATES[0] + \
-                                    2+math.pow(-1, abs(index))*0.2,2)
+                                # CURRENT_X = round(PARENT_COORDINATES[0] + \
+                                #     2+math.pow(-1, abs(index))*0.2,2)
+                                CURRENT_X = round(PARENT_COORDINATES[0] +2,2)
                                 CURRENT_Y = round(PARENT_COORDINATES[1] -index,2) # Y COORDINATE
 
                                 pos = (CURRENT_X, CURRENT_Y)
@@ -329,6 +350,7 @@ class Render:
                                     
                                 if CURRENT_Y in parent_child_y:
                                     CURRENT_Y -= 1
+                                
                                     
                                 pos = (CURRENT_X, CURRENT_Y)
                                 parent_child_y.append(CURRENT_Y)

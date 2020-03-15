@@ -167,10 +167,10 @@ class Control:
         # BOTTOM SECTION
         self.bottom_frame = Frame(self.app)
         self.bottom_frame.grid(row=3)
-        addBtn = Button(self.bottom_frame, text="+ new subject", bg="#88c878", fg=THEME_COLOR,
+        addBtn = Button(self.bottom_frame, text="+ new subject", bg="#88c878",
                         highlightbackground=THEME_COLOR, command=lambda: self.addRow())
         addBtn.grid(column=0, row=1)
-        updateBtn = Button(self.bottom_frame, text="update", bg="#318ee8", fg="#fff",
+        updateBtn = Button(self.bottom_frame, text="update", bg="#318ee8",
                            highlightbackground=THEME_COLOR, command=lambda: self.update())
         updateBtn.grid(column=1, row=1)
 
