@@ -251,7 +251,6 @@ class Render:
         else:
             G.add_node(SCHOOL_LABEL, pos=self.NODE_COORDINATES[SCHOOL_LABEL], weight=10,
                        color=SCHOOL_NODE_COLOR, text=SCHOOL_LABEL)  # ADD SCHOOL NODE
-
         # childNodes variable is an array of nodes that have prerequisite
         # rootNodes variable is an array of nodes that do not have prerequisite
         # LOOP OVER ROOT NODES ARRAY
@@ -267,7 +266,6 @@ class Render:
 
             if subject in noNextSubjects:
                 has_no_next = True
-
             if self.FIRST:
                 PARENT_CURRENT_Y = ROOT_LEVEL
                 if not has_no_next: # IS RIGHT SIDE
@@ -341,20 +339,18 @@ class Render:
                                 ## sorting for overlappeds coordinates ##
                                 coords = [self.NODE_COORDINATES[key]
                                           for key in self.NODE_COORDINATES if key != SCHOOL_LABEL]
-                                
                                 ## matched coordinates list
                                 matched = [
                                     c for c in coords if str(c) == str(pos)]
                                 if len(matched) != 0: # if overlapped coordinate
-                                    CURRENT_Y -= 1
-                                    
+                                    matched = [
+                                    c for c in coords if c[0]==pos[0] and c[1] <= pos[1] ]
+                                    matched_y = matched[len(matched)-1][1] - 1
+                                    CURRENT_Y = matched_y
                                 if CURRENT_Y in parent_child_y:
                                     CURRENT_Y -= 1
-                                
-                                    
                                 pos = (CURRENT_X, CURRENT_Y)
-                                parent_child_y.append(CURRENT_Y)
-                                parent_child_x.append(CURRENT_X)
+                                    
                                 ## if subjec is not in node coordinates dict then put it in...
                                 if _subject not in self.NODE_COORDINATES:
                                     self.NODE_COORDINATES[_subject] = pos
