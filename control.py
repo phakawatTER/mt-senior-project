@@ -225,7 +225,7 @@ class Control:
             prereq_input.grid(row=current_row, column=1, sticky="W", padx=31.5)
             Button(prerequisite_frame, text="x",command=lambda target=(index, i): self.remove_prerequsite(target)).grid(
                 row=current_row, column=0, sticky="W", columnspan=2)
-            var.trace("w",lambda name,_index,mode,var=var:self.capitalize_input(var))
+            # var.trace("w",lambda name,_index,mode,var=var:self.capitalize_input(var))
         current_row = (index+1) + len(self.TKVARS[index][3])
         Button(input_group_frame, text="+ prerequisite", command=lambda _index=index: self.add_prerequisite(_index)).grid(
             row=current_row, column=4, sticky="w")
@@ -248,7 +248,7 @@ class Control:
         
     # add empty prerequisite entry to input frame
     def add_prerequisite(self, index):
-        self.TKVARS[index][3].append(StringVar(self.app))
+        self.TKVARS[index][3].append("")
         self.updateFrame()
 
     # remove prerequisite entry
@@ -279,8 +279,7 @@ class Control:
             prerequisite = []
             if "prerequisite" in s:
                 for prereq in s["prerequisite"]:
-                    var = StringVar(self.app)
-                    var.set(prereq)
+                    var = prereq
                     prerequisite.append(var)
 
             self.TKVARS.append((tkVar1, tkVar2, tkVar3, prerequisite))

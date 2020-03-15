@@ -1,1 +1,533 @@
-{"subjects": [{"subject": "TU100", "school": ["CE"], "weight": 3, "type": "General", "prerequisite": []}, {"subject": "TU101", "school": ["CE"], "weight": 4, "type": "General", "prerequisite": ["TU120"]}, {"subject": "TU102", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "TU103", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "TU104", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "TU105", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "TU106", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "GTS133", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "GTS202", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "ITS100", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "MAS116", "school": ["CE"], "weight": 3, "type": "General", "prerequisite": []}, {"subject": "MAS117", "school": ["CE"], "weight": 3, "type": "General", "prerequisite": ["MAS116"]}, {"subject": "MAS210", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["MAS117"]}, {"subject": "CES215", "school": ["CE"], "weight": 2, "type": "General", "prerequisite": ["MAS117"]}, {"subject": "CES315", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["CES215"]}, {"subject": "SCS126", "school": ["CE"], "weight": 2, "type": "General", "prerequisite": []}, {"subject": "SCS176", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["SCS126"]}, {"subject": "SCS138", "school": ["CE"], "weight": 3, "type": "General", "prerequisite": []}, {"subject": "SCS139", "school": ["CE"], "weight": 2, "type": "General", "prerequisite": ["SCS138"]}, {"subject": "SCS184", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["SCS139"]}, {"subject": "SCS183", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["SCS138"]}, {"subject": "CES381", "school": ["CE"], "weight": 3, "type": "General", "prerequisite": ["SCS138"]}, {"subject": "CES382", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["CES381"]}, {"subject": "CES444", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["CES381"]}, {"subject": "MES350", "school": ["CE"], "weight": 3, "type": "General", "prerequisite": ["SCS138"]}, {"subject": "CES371", "school": ["CE"], "weight": 3, "type": "General", "prerequisite": ["MES350"]}, {"subject": "CES311", "school": ["CE"], "weight": 3, "type": "General", "prerequisite": ["CES371"]}, {"subject": "CES331", "school": ["CE"], "weight": 3, "type": "General", "prerequisite": ["CES371"]}, {"subject": "CES312", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["CES311"]}, {"subject": "CES321", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["CES311"]}, {"subject": "CES332", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["CES331"]}, {"subject": "CES333", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["CES331"]}, {"subject": "CES201", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "CES202", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "CES361", "school": ["CE"], "weight": 3, "type": "General", "prerequisite": []}, {"subject": "CES362", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["CES361"]}, {"subject": "CES343", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["CES361"]}, {"subject": "CES403", "school": ["CE"], "weight": 2, "type": "General", "prerequisite": []}, {"subject": "CES407", "school": ["CE"], "weight": 1, "type": "Senior Project", "prerequisite": ["CES403"]}, {"subject": "GTS302", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "MES300", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "CES351", "school": ["CE"], "weight": 3, "type": "General", "prerequisite": []}, {"subject": "CES322", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["CES351"]}, {"subject": "CES352", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["CES351"]}, {"subject": "CES354", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": ["CES351"]}, {"subject": "CES414", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "CES302", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "CES341", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "CES353", "school": ["CE"], "weight": 1, "type": "General", "prerequisite": []}, {"subject": "CES303", "school": ["CE"], "weight": 1, "type": "Senior Project", "prerequisite": []}, {"subject": "CES405", "school": ["CE"], "weight": 1, "type": "Senior Project", "prerequisite": []}, {"subject": "CES409", "school": ["CE"], "weight": 1, "type": "Senior Project", "prerequisite": []}, {"subject": "CES408", "school": ["CE"], "weight": 1, "type": "Senior Project", "prerequisite": []}]}
+{
+    "subjects": [
+        {
+            "subject": "TU100",
+            "school": [
+                "CE"
+            ],
+            "weight": 3,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "TU101",
+            "school": [
+                "CE"
+            ],
+            "weight": 4,
+            "type": "General",
+            "prerequisite": [
+                "TU120"
+            ]
+        },
+        {
+            "subject": "TU102",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "TU103",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "TU104",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "TU105",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "TU106",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "GTS133",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "GTS202",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "ITS100",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "MAS116",
+            "school": [
+                "CE"
+            ],
+            "weight": 3,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "MAS117",
+            "school": [
+                "CE"
+            ],
+            "weight": 3,
+            "type": "General",
+            "prerequisite": [
+                "MAS116"
+            ]
+        },
+        {
+            "subject": "MAS210",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "MAS117"
+            ]
+        },
+        {
+            "subject": "CES215",
+            "school": [
+                "CE"
+            ],
+            "weight": 2,
+            "type": "General",
+            "prerequisite": [
+                "MAS117"
+            ]
+        },
+        {
+            "subject": "CES315",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "CES215"
+            ]
+        },
+        {
+            "subject": "SCS126",
+            "school": [
+                "CE"
+            ],
+            "weight": 2,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "SCS176",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "SCS126"
+            ]
+        },
+        {
+            "subject": "SCS138",
+            "school": [
+                "CE"
+            ],
+            "weight": 3,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "SCS139",
+            "school": [
+                "CE"
+            ],
+            "weight": 2,
+            "type": "General",
+            "prerequisite": [
+                "SCS138"
+            ]
+        },
+        {
+            "subject": "SCS184",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "SCS139"
+            ]
+        },
+        {
+            "subject": "SCS183",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "SCS138"
+            ]
+        },
+        {
+            "subject": "CES381",
+            "school": [
+                "CE"
+            ],
+            "weight": 3,
+            "type": "General",
+            "prerequisite": [
+                "SCS138"
+            ]
+        },
+        {
+            "subject": "CES382",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "CES381"
+            ]
+        },
+        {
+            "subject": "CES444",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "CES381"
+            ]
+        },
+        {
+            "subject": "MES350",
+            "school": [
+                "CE"
+            ],
+            "weight": 3,
+            "type": "General",
+            "prerequisite": [
+                "SCS138"
+            ]
+        },
+        {
+            "subject": "CES371",
+            "school": [
+                "CE"
+            ],
+            "weight": 3,
+            "type": "General",
+            "prerequisite": [
+                "MES350"
+            ]
+        },
+        {
+            "subject": "CES311",
+            "school": [
+                "CE"
+            ],
+            "weight": 3,
+            "type": "General",
+            "prerequisite": [
+                "CES371"
+            ]
+        },
+        {
+            "subject": "CES331",
+            "school": [
+                "CE"
+            ],
+            "weight": 3,
+            "type": "General",
+            "prerequisite": [
+                "CES371"
+            ]
+        },
+        {
+            "subject": "CES312",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "CES311"
+            ]
+        },
+        {
+            "subject": "CES321",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "CES311"
+            ]
+        },
+        {
+            "subject": "CES332",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "CES331"
+            ]
+        },
+        {
+            "subject": "CES333",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "CES331"
+            ]
+        },
+        {
+            "subject": "CES201",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES202",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES361",
+            "school": [
+                "CE"
+            ],
+            "weight": 3,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES362",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "CES361"
+            ]
+        },
+        {
+            "subject": "CES343",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "CES361"
+            ]
+        },
+        {
+            "subject": "CES403",
+            "school": [
+                "CE"
+            ],
+            "weight": 2,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES407",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "Senior Project",
+            "prerequisite": [
+                "CES403"
+            ]
+        },
+        {
+            "subject": "GTS302",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "MES300",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES351",
+            "school": [
+                "CE"
+            ],
+            "weight": 3,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES322",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "CES351"
+            ]
+        },
+        {
+            "subject": "CES352",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "CES351"
+            ]
+        },
+        {
+            "subject": "CES354",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": [
+                "CES351"
+            ]
+        },
+        {
+            "subject": "CES414",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES302",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES341",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES353",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "General",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES303",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "Senior Project",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES405",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "Senior Project",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES409",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "Senior Project",
+            "prerequisite": []
+        },
+        {
+            "subject": "CES408",
+            "school": [
+                "CE"
+            ],
+            "weight": 1,
+            "type": "Senior Project",
+            "prerequisite": []
+        }
+    ]
+}
