@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['control.py'],
-             pathex=['C:\\Users\\peter\\Desktop\\mt-senior-project-no-graphframe'],
+             pathex=['/Users/phakawat/Desktop/mt-senior-project'],
              binaries=[],
              datas=[('subjects/*', 'subjects')],
              hiddenimports=[],
@@ -35,3 +35,11 @@ coll = COLLECT(exe,
                upx=True,
                upx_exclude=[],
                name='control')
+app = BUNDLE(coll,
+             name='control.app',
+             icon=None,
+             bundle_identifier=None,
+             info_plist={
+                 "NSHighResolutionCapable":'True'
+             }
+             )
