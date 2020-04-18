@@ -6,7 +6,6 @@ import argparse
 import matplotlib
 if sys_pf == 'darwin':
     matplotlib.use("TkAgg")
-from matplotlib.backend_bases import NavigationToolbar2
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.widgets as widgets
 import matplotlib.backend_tools as tools
@@ -15,6 +14,9 @@ from sys import platform as sys_pf
 import networkx as nx
 import tkinter as tk
 import os
+import matplotlib.patches as mpatches
+
+
 current_dir = os.path.dirname(__file__)
 
 
@@ -38,7 +40,6 @@ class Render:
         with open(os.path.join(current_dir,"subjects","{}.json".format(major.lower()))) as infile:
             subject_data = json.load(infile)
         self.plt = plt
-        plt.clf()
         if not major:
             major = "SCM"
         major = major.upper()
@@ -54,9 +55,7 @@ class Render:
         self.FIRST = True
         self.search_box = None
         self.search_text = ""
-        NavigationToolbar2.back = self.back
-        NavigationToolbar2.forward = self.forward
-        NavigationToolbar2.home = self.home
+
         # PLOT CONFIGURATION
         plt.rcParams["figure.figsize"] = SIZE
         plt.subplots_adjust(
@@ -77,7 +76,9 @@ class Render:
             # self.canvas.get_tk_widget().pack(side='bottom', fill='both', expand=1) # ERROR Tk.
             self.canvas.mpl_connect('button_press_event',self.removeNodeOnClick)
             # self.app.mainloop()
-        
+
+    def destroy_plot(self):
+        self.plt.close()
 
     ### END CLASS INIT ###
      # BACK BUTTON CALLBACK FUNCTION
@@ -171,28 +172,17 @@ class Render:
             self.redraw()
         ######***** END ON CLICK CALLBACK FUNCTION *****######
         
-    # ## sorted by number of child 
-    # def sort_subject (self):
-    #     subject_child = {}
-    #     for s in self.subjects:
-    #         subject = s["subject"]
-    #         prerequisite = s["prerequisite"]
-    #         if len(prerequisite) > 0: # child subject
-    #             for p in prerequisite:
-    #                 if p not in subject_child:
-    #                     subject_child[p] = []
-    #                 subject_child[p].append(subject)
-    #         else:
-    #             subject_child[subject] = []
-    #     for subject in copy.deepcopy(subject_child) :
-    #         if len(subject_child[subject]) == 0:
-    #             del subject_child[subject]
-    #     sorted_list = []
-    #     for s in subject_child:
-    #         print(s,subject_child[s])
     # Draw everything
     def draw(self):
+        
         global MAJOR
+
+        # add legend to plot
+        general = mpatches.Patch(color=TYPE_COLORS["General"], label='General Subject')
+        free_elective = mpatches.Patch(color=TYPE_COLORS["Free Elective"], label='Free Elective')
+        senior = mpatches.Patch(color=TYPE_COLORS["Senior Project"], label='Senior Project')
+        plt.legend(handles=[general,free_elective,senior])
+
         G = nx.DiGraph()
         # HISTORY STACK ON GIVEN CURRENT HISTORY INDEX
         self.subjects = self.HISTORY[self.HISTORY_INDEX]
@@ -447,6 +437,7 @@ class Render:
             )
             self.search_box.on_submit(self.searchSubject)
             self.search_box.on_text_change(self.setSearchBoxText)
+        
     # END DRAW FUNCTION
 
     # ON TEXT CHANGE CALLBACK FUNCTION

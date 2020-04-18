@@ -2,7 +2,7 @@ import json
 import os
 from multiprocessing import Process
 import copy
-from graph import Render
+import graph
 from tkinter import *
 from sys import platform
 from tkinter import messagebox
@@ -36,17 +36,19 @@ TITLE_COLOR = "#000"
 class Control:
     def __init__(self):
         self.app = Tk()
-        self.app.title("MT Senior Project")
+        self.app.configure(background=THEME_COLOR)
+        self.app.title("SIIT Cirriculum")
         self.app.resizable(False, False)
+        self.render_object = None
         self.graphframe = None
         self.search_matched = False
         self.matched_index = []
         self.yscroll = 0
-        self.mainframe = Frame(self.app, bg=THEME_COLOR)
+        self.mainframe = Frame(self.app)
         self.TKVARS = []
         self.mainframe.grid(row=2)
         self.canvas = Canvas(
-            self.mainframe, bg=THEME_COLOR, height=350)
+            self.mainframe, bg="red", height=350)
         self.tkvar = StringVar(self.app)
         ## list of school in SIIT
         self.choices = {
@@ -110,7 +112,9 @@ class Control:
                     self.graphframe.graph.plt.close()
                 except:
                     pass
+                graph.plt.close() 
                 self.app.destroy()
+                
         self.app.protocol("WM_DELETE_WINDOW", on_closing)
         self.app.mainloop()
 
@@ -137,7 +141,7 @@ class Control:
         self.updateFrame()
 
     def add_head(self):
-        frame = Frame(self.app)
+        frame = Frame(self.app,bg=THEME_COLOR)
         frame.grid(row=0)
         Label(frame, text=f"Select School", bg=THEME_COLOR,
               fg=TITLE_COLOR).grid(row=1, column=1, sticky="E")
@@ -148,7 +152,7 @@ class Control:
         self.search_text = StringVar(self.app)
         Label(self.search_frame, text=f"Search for", bg=THEME_COLOR,
               fg=TITLE_COLOR).grid(row=2, column=1)
-        search_box = Entry(self.search_frame, textvariable=self.search_text)
+        search_box = Entry(self.search_frame, textvariable=self.search_text,relief="groove", borderwidth=2)
         search_box.grid(row=2, column=2)
         search_box.bind("<Return>", self._search_submit)
         self.search_result_label = Label(self.search_frame, text="", bg=THEME_COLOR,
@@ -163,33 +167,23 @@ class Control:
         self.button_1 = Button(frame, text='View Path', bg="#318ee8", fg="#000",
                                command=lambda: self.renderGraph())
         self.button_1 . grid(row=1, column=3, sticky="W")
-        frame2 = Frame(self.app)
-        frame2.grid(row=1,sticky="EW")
-        Label(frame2, text="", bg=THEME_COLOR,width=8,
-            fg=TITLE_COLOR).grid(row=3, column=1,sticky="W")
-        Label(frame2, text="Subject", bg=THEME_COLOR,width=10,
-            fg=TITLE_COLOR).grid(row=3, column=2,sticky="W")
-        Label(frame2, text="Weight", bg=THEME_COLOR,width=8,
-            fg=TITLE_COLOR).grid(row=3, column=3,sticky="W")
-        Label(frame2, text="Type", bg=THEME_COLOR,width=15,
-            fg=TITLE_COLOR).grid(row=3, column=4,sticky="W")
-        Label(frame2, text="Add Prerequisite", bg=THEME_COLOR,width=12,
-            fg=TITLE_COLOR).grid(row=3, column=5,sticky="E")
+       
+        
 
     def add_bottom(self):
         # BOTTOM SECTION
         self.bottom_frame = Frame(self.app)
         self.bottom_frame.grid(row=3)
-        addBtn = Button(self.bottom_frame, text="+ new subject", bg="#88c878",fg="#000",
+        addBtn = Button(self.bottom_frame, text="+ New Subject", bg="#88c878",fg="#000",
                         highlightbackground=THEME_COLOR, command=lambda: self.addRow())
         addBtn.grid(column=0, row=1)
-        updateBtn = Button(self.bottom_frame, text="update", bg="#318ee8",fg="#000",
+        updateBtn = Button(self.bottom_frame, text="Update", bg="#318ee8",fg="#000",
                            highlightbackground=THEME_COLOR, command=lambda: self.update())
         updateBtn.grid(column=1, row=1)
 
     def addframe(self):
         self.frame = Frame(self.canvas, bg=THEME_COLOR)
-        self.input_frame = Frame(self.frame)
+        self.input_frame = Frame(self.frame, bg=THEME_COLOR)
         self.input_frame.grid(row=4, column=1, columnspan=4)
         # ADD SCROLLBAR
         # # Update content
@@ -203,44 +197,64 @@ class Control:
         render_list = [i for i in range(0, len(self.TKVARS))]
         if self.search_matched:
             render_list = self.matched_index
-        for pos,index in enumerate(render_list,start=0):
-            self.addInputChildFrame(index)
+        input_header = Frame(self.input_frame,bg=THEME_COLOR)
+        input_header.grid(row=0,column=0, sticky="EW")
+        # Label(input_header, text="Subject",width=11,
+        #     fg=TITLE_COLOR).grid(row=1, column=2,sticky="W")
+        # Label(input_header, text="Weight",width=8,
+        #     fg=TITLE_COLOR).grid(row=1, column=3,sticky="W")
+        # Label(input_header, text="Type",width=15,
+        #     fg=TITLE_COLOR).grid(row=1, column=4,sticky="W")
+        # Label(input_header, text="Add Prerequisite",width=12,
+        #     fg=TITLE_COLOR).grid(row=1, column=5,sticky="E")
+        for pos,index in enumerate(render_list):
+            self.addInputChildFrame(index) # render each subject input row
 
     def addInputChildFrame(self, index):
-        input_group_frame = Frame(self.input_frame)
-        input_group_frame.grid(row=index+1, column=0, sticky="EW")
+        input_group_frame = Frame(self.input_frame,bg=THEME_COLOR)
+        input_group_frame.grid(row=index+1, column=1, sticky="EW")
+        if index == 0:
+            Label(input_group_frame,bg=THEME_COLOR,width=8 ,text="Subject",
+                fg=TITLE_COLOR).grid(row=index, column=1,sticky="W")
+            Label(input_group_frame,bg=THEME_COLOR,width=8 ,text="Weight",
+                fg=TITLE_COLOR).grid(row=index, column=2,sticky="W")
+            Label(input_group_frame,bg=THEME_COLOR,width=8 ,text="Type",
+                fg=TITLE_COLOR).grid(row=index, column=3,sticky="W")
+            Label(input_group_frame,bg=THEME_COLOR,width=8 ,text="Prerequisite",
+                fg=TITLE_COLOR).grid(row=index, column=4,sticky="W")
 
-        Button(input_group_frame, text="remove", bg="#e6245c", fg="#000", highlightbackground=THEME_COLOR, command=lambda s=index: self.removeRow(s))\
+        Button(input_group_frame, text="Remove", bg="red",relief="groove", borderwidth=2, command=lambda s=index: self.removeRow(s))\
             .grid(row=index+1, column=0, sticky="N")
         subject_entry = Entry(
-            input_group_frame, textvariable=self.TKVARS[index][0], highlightbackground=THEME_COLOR)
+            input_group_frame, textvariable=self.TKVARS[index][0], relief="groove", borderwidth=2)
         subject_entry.grid(row=index+1, column=1, sticky="N")
         self.TKVARS[index][0].trace("w",lambda name,_index,mode,var=self.TKVARS[index][0]:self.capitalize_input(var))
         subject_entry.configure(width=10)
         weight_entry = Entry(
-            input_group_frame, textvariable=self.TKVARS[index][1], width=20, highlightbackground=THEME_COLOR)
+            input_group_frame, textvariable=self.TKVARS[index][1], relief="groove", borderwidth=2)
+        # weight_entry.place(width=80)
         weight_entry.grid(row=index+1, column=2, sticky="N")
         self.TKVARS[index][1].trace("w",lambda name,_index,mode,var=self.TKVARS[index][1]:self.numeric_input(var))
-        weight_entry.configure(width=5)
+        weight_entry.configure(width=10)
         subject_type_option = OptionMenu(
             input_group_frame, self.TKVARS[index][2], *self.subject_types)
-        subject_type_option.configure(width=15)
+        subject_type_option.configure(width=15,bg=THEME_COLOR)
         subject_type_option.grid(row=index+1, column=3, sticky="N")
 
         ## Prerequisite subjects
-        prerequisite_frame = Frame(input_group_frame)
+        prerequisite_frame = Frame(input_group_frame,bg=THEME_COLOR)
         prerequisite_frame.grid(row=index+1, column=4)
         # loop over preqrequsiite list
         for i, var in enumerate(self.TKVARS[index][3], start=0):
             current_row = index+i+1
-            prereq_input = Entry(prerequisite_frame, textvariable=var)
+            prereq_input = Entry(prerequisite_frame, textvariable=var,relief="groove", borderwidth=2)
             prereq_input.configure(width=8)
             prereq_input.grid(row=current_row, column=1, sticky="W", padx=31.5)
-            Button(prerequisite_frame, text="x",command=lambda target=(index, i): self.remove_prerequsite(target)).grid(
+            Button(prerequisite_frame, text="x",command=lambda target=(index, i): self.remove_prerequsite(target) ,bg="red").grid(
                 row=current_row, column=0, sticky="W", columnspan=2)
             var.trace("w",lambda name,_index,mode,var=var:self.capitalize_input(var))
         current_row = (index+1) + len(self.TKVARS[index][3])
-        Button(input_group_frame, text="+ prerequisite", command=lambda _index=index: self.add_prerequisite(_index)).grid(
+        Button(input_group_frame, text="+ Prerequisite", command=lambda _index=index: self.add_prerequisite(_index) , width=20 ,bg="#88c878").grid(
             row=current_row, column=4, sticky="w")
 
     # callback  function to automatically capitalize input
@@ -367,7 +381,7 @@ class Control:
             json.dump(globals()[self.MAJOR], json_file)
 
     def renderGraph(self):
-        Render(major=self.MAJOR,name=self.NAME)
+        self.render_object = graph.Render(major=self.MAJOR,name=self.NAME)
 
 
 if __name__ == "__main__":
