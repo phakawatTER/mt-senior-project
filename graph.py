@@ -4,13 +4,12 @@ import copy
 import math
 import argparse
 import matplotlib
-if sys_pf == 'darwin':
-    matplotlib.use("TkAgg")
+# if sys_pf == 'darwin':
+#     matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.widgets as widgets
 import matplotlib.backend_tools as tools
 import matplotlib.pyplot as plt
-from sys import platform as sys_pf
 import networkx as nx
 import tkinter as tk
 import os
