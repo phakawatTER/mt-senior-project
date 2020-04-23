@@ -48,7 +48,7 @@ class Control:
         self.TKVARS = []
         self.mainframe.grid(row=2)
         self.canvas = Canvas(
-            self.mainframe, bg="red", height=350)
+            self.mainframe, bg=THEME_COLOR, height=350)
         self.tkvar = StringVar(self.app)
         ## list of school in SIIT
         self.choices = {
@@ -81,6 +81,7 @@ class Control:
         def change_dropdown(*args):
             split = self.tkvar.get().split()
             self.NAME = self.tkvar.get() # Full Major Name
+            # print(self.NAME)
             self.MAJOR = split[2].replace("(", "").replace(")", "")
             self.MAJOR = self.MAJOR.lower()
             self.app.after(1, lambda: self.setSubjects())
