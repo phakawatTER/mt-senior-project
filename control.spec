@@ -26,7 +26,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=False )
+          console=False , icon='whale.icns')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
@@ -37,9 +37,7 @@ coll = COLLECT(exe,
                name='control')
 app = BUNDLE(coll,
              name='control.app',
-             icon=None,
-             bundle_identifier=None,
-             info_plist={
+             icon='whale.icns',
+             bundle_identifier=None,info_plist={
                  "NSHighResolutionCapable":'True'
-             }
-             )
+             })

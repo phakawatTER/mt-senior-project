@@ -3,9 +3,7 @@ import json
 import copy
 import math
 import argparse
-import matplotlib
-# if sys_pf == 'darwin':
-#     matplotlib.use("TkAgg")
+import matplotlib as mpl
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.widgets as widgets
 import matplotlib.backend_tools as tools
@@ -15,6 +13,8 @@ import tkinter as tk
 import os
 import matplotlib.patches as mpatches
 
+
+mpl.rcParams["toolbar"] ="None"
 
 current_dir = os.path.dirname(__file__)
 
