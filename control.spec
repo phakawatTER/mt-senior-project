@@ -37,7 +37,7 @@ coll = COLLECT(exe,
                name='control')
 app = BUNDLE(coll,
              name='control.app',
-             icon='whale.icns',
+             
              bundle_identifier=None,info_plist={
                  "NSHighResolutionCapable":'True'
              })

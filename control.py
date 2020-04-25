@@ -32,6 +32,8 @@ for file in os.listdir(data_dir):
 
 THEME_COLOR = "#ffffff"
 TITLE_COLOR = "#000"
+HEADER_BOLD_FONT ='Helvetica 16 bold'
+CONTENT_BOLD_FONT =  'Helvetica 13 bold'
 
 class Control:
     def __init__(self):
@@ -57,7 +59,7 @@ class Control:
             "Engineering Management (EM)",
             "Information Technology (IT)",
             "Industrial Engineering (IE)",
-            "Mechinical Engineering (ME)",
+            "Mechanical Engineering (ME)",
             "Electrical Engineering (EE)",
             "Computer Engineering (CPE)",
             "Civil Engineering (CE)",
@@ -145,6 +147,7 @@ class Control:
         frame = Frame(self.app,bg=THEME_COLOR)
         frame.grid(row=0)
         Label(frame, text=f"Select School", bg=THEME_COLOR,
+              font=HEADER_BOLD_FONT,
               fg=TITLE_COLOR).grid(row=1, column=1, sticky="E")
         self.search_frame = Frame(frame, bg=THEME_COLOR)
         self.search_frame.grid(row=2, column=1, columnspan=3)
@@ -152,6 +155,7 @@ class Control:
         # SEARCH BOX WIDGET
         self.search_text = StringVar(self.app)
         Label(self.search_frame, text=f"Search for", bg=THEME_COLOR,
+              font=CONTENT_BOLD_FONT,
               fg=TITLE_COLOR).grid(row=2, column=1)
         search_box = Entry(self.search_frame, textvariable=self.search_text,relief="groove", borderwidth=2)
         search_box.grid(row=2, column=2)
@@ -166,9 +170,9 @@ class Control:
 
         self.row_size = self.schoolOptions.winfo_height()
         self.button_1 = Button(frame, text='View Path', bg="#318ee8", fg="#000",
+                               font=HEADER_BOLD_FONT,
                                command=lambda: self.renderGraph())
         self.button_1 . grid(row=1, column=3, sticky="W")
-       
         
 
     def add_bottom(self):
@@ -176,9 +180,11 @@ class Control:
         self.bottom_frame = Frame(self.app)
         self.bottom_frame.grid(row=3)
         addBtn = Button(self.bottom_frame, text="+ New Subject", bg="#88c878",fg="#000",
+                        font=CONTENT_BOLD_FONT,
                         highlightbackground=THEME_COLOR, command=lambda: self.addRow())
         addBtn.grid(column=0, row=1)
         updateBtn = Button(self.bottom_frame, text="Update", bg="#318ee8",fg="#000",
+                           font=CONTENT_BOLD_FONT,
                            highlightbackground=THEME_COLOR, command=lambda: self.update())
         updateBtn.grid(column=1, row=1)
 
@@ -198,16 +204,6 @@ class Control:
         render_list = [i for i in range(0, len(self.TKVARS))]
         if self.search_matched:
             render_list = self.matched_index
-        input_header = Frame(self.input_frame,bg=THEME_COLOR)
-        input_header.grid(row=0,column=0, sticky="EW")
-        # Label(input_header, text="Subject",width=11,
-        #     fg=TITLE_COLOR).grid(row=1, column=2,sticky="W")
-        # Label(input_header, text="Weight",width=8,
-        #     fg=TITLE_COLOR).grid(row=1, column=3,sticky="W")
-        # Label(input_header, text="Type",width=15,
-        #     fg=TITLE_COLOR).grid(row=1, column=4,sticky="W")
-        # Label(input_header, text="Add Prerequisite",width=12,
-        #     fg=TITLE_COLOR).grid(row=1, column=5,sticky="E")
         for pos,index in enumerate(render_list):
             self.addInputChildFrame(index) # render each subject input row
 
@@ -215,16 +211,16 @@ class Control:
         input_group_frame = Frame(self.input_frame,bg=THEME_COLOR)
         input_group_frame.grid(row=index+1, column=1, sticky="EW")
         if index == 0:
-            Label(input_group_frame,bg=THEME_COLOR,width=8 ,text="Subject",
+            Label(input_group_frame,bg=THEME_COLOR,font=HEADER_BOLD_FONT,width=8 ,text="Subject",
                 fg=TITLE_COLOR).grid(row=index, column=1,sticky="W")
-            Label(input_group_frame,bg=THEME_COLOR,width=8 ,text="Weight",
+            Label(input_group_frame,bg=THEME_COLOR,font=HEADER_BOLD_FONT,width=8 ,text="Weight",
                 fg=TITLE_COLOR).grid(row=index, column=2,sticky="W")
-            Label(input_group_frame,bg=THEME_COLOR,width=8 ,text="Type",
+            Label(input_group_frame,bg=THEME_COLOR,font=HEADER_BOLD_FONT,width=8 ,text="Type",
                 fg=TITLE_COLOR).grid(row=index, column=3,sticky="W")
-            Label(input_group_frame,bg=THEME_COLOR,width=8 ,text="Prerequisite",
+            Label(input_group_frame,bg=THEME_COLOR,font=HEADER_BOLD_FONT,width=10 ,text="Prerequisite",
                 fg=TITLE_COLOR).grid(row=index, column=4,sticky="W")
 
-        Button(input_group_frame, text="Remove", bg="red",relief="groove", borderwidth=2, command=lambda s=index: self.removeRow(s))\
+        Button(input_group_frame, text="Remove",font=CONTENT_BOLD_FONT,bg="red",relief="groove", borderwidth=2, command=lambda s=index: self.removeRow(s))\
             .grid(row=index+1, column=0, sticky="N")
         subject_entry = Entry(
             input_group_frame, textvariable=self.TKVARS[index][0], relief="groove", borderwidth=2)
@@ -255,7 +251,7 @@ class Control:
                 row=current_row, column=0, sticky="W", columnspan=2)
             var.trace("w",lambda name,_index,mode,var=var:self.capitalize_input(var))
         current_row = (index+1) + len(self.TKVARS[index][3])
-        Button(input_group_frame, text="+ Prerequisite", command=lambda _index=index: self.add_prerequisite(_index) , width=20 ,bg="#88c878").grid(
+        Button(input_group_frame, text="+ Prerequisite",font=CONTENT_BOLD_FONT, command=lambda _index=index: self.add_prerequisite(_index) , width=20 ,bg="#88c878").grid(
             row=current_row, column=4, sticky="w")
 
     # callback  function to automatically capitalize input
@@ -382,8 +378,7 @@ class Control:
             json.dump(globals()[self.MAJOR], json_file)
 
     def renderGraph(self):
-        self.render_object = graph.Render(major=self.MAJOR,name=self.NAME)
-
+        graph.Render(major=self.MAJOR,name=self.NAME)
 
 if __name__ == "__main__":
     Control()
